@@ -16,10 +16,10 @@ His workflow: grade the original here → import the graded file into CapCut →
 ## Run
 
 ```bash
-python3 -I .agents/skills/grade/scripts/grade.py <video.mov> [-o out.mp4]
+uv run .agents/skills/grade/scripts/grade.py <video.mov> [-o out.mp4]
 ```
 
-Needs `ffmpeg`. Standard library Python only. A 40s 4K clip takes about 2 minutes. Output defaults to `<name>_graded.mp4` next to the input, plus `<name>_graded_compare.jpg` (original | graded at 20%, 50%, 80%).
+A 40s 4K clip takes about 2 minutes. Output defaults to `<name>_graded.mp4` next to the input, plus `<name>_graded_compare.jpg` (original | graded at 20%, 50%, 80%).
 
 Then:
 

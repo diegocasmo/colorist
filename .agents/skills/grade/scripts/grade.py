@@ -7,7 +7,6 @@ import subprocess
 import sys
 import tempfile
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from look import hlg_inv, write_cube
 
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
