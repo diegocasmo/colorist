@@ -1,0 +1,124 @@
+{
+  "looks": {
+    "red": {
+      "wall_channel": "red",
+      "look": {
+        "curve": [
+          [
+            0,
+            0
+          ],
+          [
+            0.01,
+            0.035
+          ],
+          [
+            0.05,
+            0.085
+          ],
+          [
+            0.2,
+            0.21
+          ],
+          [
+            0.45,
+            0.48
+          ],
+          [
+            0.8,
+            0.84
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "sat": 1.1,
+        "skin_shift": 10,
+        "skin_lift": 0.18,
+        "wall_deepen": 0.16,
+        "wall_hue": -4,
+        "lift_tint": [
+          1.12,
+          0.99,
+          0.85
+        ],
+        "skin_hue": 0,
+        "skin_width": 28,
+        "wall_center": 0,
+        "wall_width": 28,
+        "wall_min_sat": 0.42,
+        "wall_min_light": 0.35
+      },
+      "reference": {
+        "level": 0.3375,
+        "ratios": [
+          1.0,
+          0.2983,
+          0.197
+        ]
+      }
+    },
+    "blue": {
+      "wall_channel": "blue",
+      "look": {
+        "curve": [
+          [
+            0,
+            0
+          ],
+          [
+            0.01,
+            0.035
+          ],
+          [
+            0.05,
+            0.085
+          ],
+          [
+            0.2,
+            0.21
+          ],
+          [
+            0.45,
+            0.48
+          ],
+          [
+            0.8,
+            0.84
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "sat": 1.08,
+        "skin_hue": 340,
+        "skin_width": 45,
+        "skin_shift": 26,
+        "skin_lift": 0.2,
+        "wall_center": 218,
+        "wall_width": 30,
+        "wall_min_sat": 0.7,
+        "wall_min_light": 0.15,
+        "wall_deepen": 0.16,
+        "spill_hue": 228,
+        "spill_width": 40,
+        "spill_desat": 0.75,
+        "lift_tint": [
+          1.1,
+          1.0,
+          0.88
+        ]
+      },
+      "reference": {
+        "level": 0.5010922004251174,
+        "ratios": [
+          0.07236174936303787,
+          0.125806296057966,
+          1.0
+        ]
+      }
+    }
+  }
+}
