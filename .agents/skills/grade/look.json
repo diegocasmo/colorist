@@ -119,6 +119,69 @@
           1.0
         ]
       }
+    },
+    "light-blue": {
+      "wall_channel": "blue",
+      "look": {
+        "skin_hue": 15,
+        "skin_width": 40,
+        "wall_center": 200,
+        "wall_width": 30,
+        "wall_min_sat": 0.6,
+        "wall_min_light": 0.12,
+        "spill_hue": 300,
+        "spill_width": 70,
+        "wall_hue": 0,
+        "curve": [
+          [
+            0,
+            0
+          ],
+          [
+            0.01,
+            0.018
+          ],
+          [
+            0.05,
+            0.05
+          ],
+          [
+            0.2,
+            0.16
+          ],
+          [
+            0.45,
+            0.46
+          ],
+          [
+            0.8,
+            0.87
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "sat": 1.15,
+        "skin_shift": 0,
+        "skin_lift": 0,
+        "wall_deepen": 0.46,
+        "spill_desat": 0.7,
+        "lift_tint": [
+          1.14,
+          1.0,
+          0.82
+        ],
+        "spill_flat": 48
+      },
+      "reference": {
+        "level": 0.42654385287576574,
+        "ratios": [
+          0.13246201032104912,
+          0.35289448155287245,
+          1.0
+        ]
+      }
     }
   }
 }

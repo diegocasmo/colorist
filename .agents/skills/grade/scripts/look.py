@@ -5,7 +5,7 @@ A, B, C = 0.17883277, 0.28466892, 0.55991073
 BT2020_TO_709 = [[1.6605, -0.5876, -0.0728], [-0.1246, 1.1329, -0.0083], [-0.0182, -0.1006, 1.1187]]
 NEUTRAL = dict(curve=[[0, 0], [1, 1]], sat=1.0, skin_hue=0, skin_width=28, skin_shift=0, skin_lift=0,
                wall_center=0, wall_width=28, wall_min_sat=0.42, wall_min_light=0.35, wall_deepen=0, wall_hue=0,
-               spill_hue=225, spill_width=40, spill_desat=0, lift_tint=[1, 1, 1])
+               spill_hue=225, spill_width=40, spill_flat=0, spill_desat=0, lift_tint=[1, 1, 1])
 WHITE = 4.93
 
 
@@ -43,9 +43,11 @@ def band(v, lo, hi, soft):
     return min(1, max(0, (v - lo) / soft)) * min(1, max(0, (hi - v) / soft))
 
 
-def hue_window(hd, center, width):
-    d = (hd - center + 180) % 360 - 180
-    return 0.5 * (1 + math.cos(math.pi * d / width)) if abs(d) < width else 0
+def hue_window(hd, center, width, flat=0):
+    d = abs((hd - center + 180) % 360 - 180)
+    if d <= flat:
+        return 1
+    return 0.5 * (1 + math.cos(math.pi * (d - flat) / (width - flat))) if d < width else 0
 
 
 def make_transform(look, gains=(1, 1, 1)):
@@ -80,7 +82,10 @@ def make_transform(look, gains=(1, 1, 1)):
         h, l, sat = colorsys.rgb_to_hls(*rgb)
         # Lamp light reflected off the performer (white shirt, black clothes) is weakly saturated;
         # the wall itself is near full saturation, so a saturation ceiling separates them.
-        spill = hue_window(h * 360, P['spill_hue'], P['spill_width']) * min(1, max(0, (0.5 - sat) / 0.15))
+        # A flat top gives every tinted pixel the same correction: under a cosine peak, compression noise
+        # in hue becomes uneven desaturation, which shows as grey and lilac patches on the shirt.
+        spill = (hue_window(h * 360, P['spill_hue'], P['spill_width'], P['spill_flat'])
+                 * min(1, max(0, (0.5 - sat) / 0.15)))
         if spill:
             # Near-white pixels have noisy hue (compression), so this must only touch colour:
             # pulling toward luma keeps brightness fixed and the noise never becomes blotches.
