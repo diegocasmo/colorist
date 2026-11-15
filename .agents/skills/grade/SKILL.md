@@ -5,7 +5,7 @@ description: Color-grade Diego's guitar performance videos (iPhone HLG footage o
 
 # Grade
 
-Each lamp color has one frozen look in `look.json`, applied by a script. Do not invent, re-tune, or "adapt" a grade per video by eye: that is what made past results inconsistent. The only per-video change is an automatic exposure and tint match against that color's reference clip.
+Each lamp color (and shade, e.g. `blue` and the paler cyan `light-blue`) has one frozen look in `look.json`, applied by a script. The script picks the look automatically: the wall's dominant channel, then the look whose reference wall tint is closest. Do not invent, re-tune, or "adapt" a grade per video by eye: that is what made past results inconsistent. The only per-video change is an automatic exposure and tint match against that color's reference clip.
 
 ## Input
 
@@ -32,7 +32,8 @@ If the script prints `WARNING ... clamped`, the clip is far from the reference (
 ## Rules for any change to the pipeline
 
 - **The HLG to SDR decode is fixed** (in `look.py`). Guessing it turned the same red wall coral or deep red.
-- **Removing lamp color from the performer must keep brightness constant.** Near-white pixels have noisy hue from compression; any step that changes brightness based on hue or saturation there turns that noise into visible blotches.
+- **Removing lamp color from the performer must keep brightness constant.** Near-white pixels have noisy hue from compression; any step that changes brightness based on hue or saturation there turns that noise into visible blotches. Skin is the same: `skin_lift` blotched the cheeks on the light-blue clip, so that look keeps it at 0.
+- **Remove spill evenly.** A narrow spill window desaturates noisy-hue pixels by different amounts (grey and lilac patches on the shirt). Use `spill_flat` so the whole tint range gets the same correction.
 - **Preservation is the script's job.** It is a color-only LUT (no crop, scale, sharpen, or denoise), audio is copied bit-exact, and the script exits non-zero if frame count, frame rate, displayed size, audio, or the SDR Rec.709 tags don't check out.
 
 ## Changing a look or adding a lamp color
@@ -41,5 +42,5 @@ Never save an unapproved look.
 
 1. Measure the clip first (wall hue, skin hue, spill on the shirt, clipping) and explain what the look must fix.
 2. Add or edit the entry in `look.json` → `looks` (`wall_channel` = the dominant channel: `red`, `green`, or `blue`). Render subtle/medium/bold stills of 3 frames next to the original, check them for artifacts (zoom on shirt and face), and let Diego pick.
-3. Save the pick, add `reference/approved-<color>.jpg`, and run once with `--calibrate` on that clip to store its reference.
-4. Re-render the approved stills of every other look and confirm they are pixel-identical.
+3. Save the pick, add `reference/approved-<color>.jpg`, and run once with `--calibrate <look>` on that clip to store its reference (this is also what lets the auto-pick choose it).
+4. Confirm every other look is unchanged: their LUTs (`write_cube`) must be byte-identical before and after.

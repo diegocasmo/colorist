@@ -1,6 +1,7 @@
 import argparse
 import array
 import json
+import math
 import os
 import statistics
 import subprocess
@@ -65,15 +66,24 @@ def measure(path, duration):
     return out
 
 
+def wall_distance(m, ref, channel):
+    d = CHANNELS.index(channel)
+    return sum(math.log(m['ratios'][k] / ref['ratios'][k]) ** 2 for k in range(3) if k != d)
+
+
 def pick_look(m, looks):
-    known = {cfg['wall_channel']: name for name, cfg in looks.items()}
     if not m:
         sys.exit('Could not find a lamp-lit wall in this clip. Is this the usual setup?')
     wall = max(m, key=lambda c: m[c]['count'])
-    if wall not in known:
+    candidates = [name for name, cfg in looks.items() if cfg['wall_channel'] == wall]
+    if not candidates:
+        known = sorted({cfg['wall_channel'] for cfg in looks.values()})
         sys.exit(f"The wall looks {wall}, and there is no approved look for that lamp colour yet. "
                  f"Known: {', '.join(known)}. Build and approve one first (see SKILL.md).")
-    return known[wall]
+    # One lamp colour can have several shades (blue, light-blue): pick the look whose reference wall
+    # tint is nearest. Exposure is left out because it varies per clip and the match gains fix it.
+    return min(candidates, key=lambda n: wall_distance(m[wall], looks[n]['reference'], wall)
+               if looks[n].get('reference') else math.inf)
 
 
 def clamp(v, lo, hi):
@@ -157,8 +167,9 @@ def main():
     ap = argparse.ArgumentParser(description='Apply the frozen guitar-video grade to an iPhone HLG clip.')
     ap.add_argument('input')
     ap.add_argument('-o', '--output')
-    ap.add_argument('--calibrate', action='store_true',
-                    help="store this clip's wall measurement as the reference every future clip is matched to")
+    ap.add_argument('--calibrate', metavar='LOOK',
+                    help="store this clip's wall measurement as LOOK's reference, which picks LOOK for "
+                         "similar clips and matches them to this one")
     args = ap.parse_args()
 
     src = os.path.abspath(args.input)
@@ -171,8 +182,12 @@ def main():
 
     cfg = json.load(open(LOOK_FILE))
     m = measure(src, duration)
-    name = pick_look(m, cfg['looks'])
+    if args.calibrate and args.calibrate not in cfg['looks']:
+        sys.exit(f"No look named '{args.calibrate}'. Known: {', '.join(cfg['looks'])}.")
+    name = args.calibrate or pick_look(m, cfg['looks'])
     entry = cfg['looks'][name]
+    if entry['wall_channel'] not in m:
+        sys.exit(f"No {entry['wall_channel']} lamp-lit wall found in this clip for the {name} look.")
     wall = m[entry['wall_channel']]
     print(f"Lamp: {name}. Wall measurement: level {wall['level']:.4f}, ratios {[round(r, 4) for r in wall['ratios']]}")
     if args.calibrate:
